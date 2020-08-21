@@ -1,4 +1,3 @@
-
 #include <iostream>  
 #include <cstring> 
 #include <cstdlib> 
@@ -8,6 +7,7 @@
 using namespace std; 
 const int MAX = 10001;  
 
+//Evens up the two arrays by adding zeros to the front of the smaller array
 void addZero(char* arr, int n) 
 { 
   int lena = strlen(arr); 
@@ -22,6 +22,7 @@ void addZero(char* arr, int n)
   } 
 } 
 
+//removes leading zeros
 void remZero(char* arr) 
 { 
   int lena = strlen(arr); 
@@ -37,26 +38,21 @@ void remZero(char* arr)
   arr[lena - count] = 0; 
 } 
 
-
+//School addition function for large ints 
 void schooladd(char* first, char* second, char* res, int B) {
 
   int lena = strlen(first); 
   int lenb = strlen(second); 
-
   int n = abs(lena-lenb);
-
 
   if(lena < lenb){
     addZero(first,n);
-
   }else if(lena > lenb){
     addZero(second,n);
-
   }
   int l = strlen(first);
   int s = 0;
   int carry = 0;
-
   int count = 0;
   for (int i = l-1 ; i>-1 ; i--){
     int sum = (first[i] - '0') + (second[i] - '0' ) + carry;
@@ -64,12 +60,8 @@ void schooladd(char* first, char* second, char* res, int B) {
     s = sum - carry*B;
     res[i] = s + '0';
     count++;
-
   }
-
   if(carry!=0 and count == l){
-
-
     char sup[MAX];
     sup[0] = '\0';
     strcpy(sup,res);
@@ -79,40 +71,34 @@ void schooladd(char* first, char* second, char* res, int B) {
   }
 } 
 
-
+//School addition subtraction
 void subtract(char* first, char* second, char* res, int B) 
 { 
   int lena = strlen(first); 
   int lenb = strlen(second); 
-
   int n = abs(lena-lenb);
 
+  if(lena<lenb){
+    addZero(first,n);
 
-
- if(lena<lenb){
-  addZero(first,n);
-
-
-
-}else if(lena>lenb){
-  addZero(second,n);
-}
-
-int l = strlen(first);
-
-for (int i = l-1;i>-1;i--){
-
-  int s = 0;
-  s = (first[i] - '0')-(second[i] - '0');
-  if (s < 0){
-    s = s + B;
-    first[i-1] = (first[i-1]-'0') - (1-'0');
+  }else if(lena>lenb){
+    addZero(second,n);
   }
-  res[i] = s + '0';
-}
 
-} 
+  int l = strlen(first);
 
+  for (int i = l-1;i>-1;i--){
+
+    int s = 0;
+    s = (first[i] - '0')-(second[i] - '0');
+    if (s < 0){
+      s = s + B;
+      first[i-1] = (first[i-1]-'0') - (1-'0');
+    }
+    res[i] = s + '0';
+}} 
+
+//Multply by base 10
 void base10(char* arr, int n) 
 { 
   int lena = strlen(arr); 
@@ -127,6 +113,7 @@ void base10(char* arr, int n)
   arr[lena + n] = 0; 
 } 
 
+
 char* CreateArray(int l) 
 { 
   char* res = new char[l]; 
@@ -134,6 +121,7 @@ char* CreateArray(int l)
   return res; 
 } 
 
+//Karatsuba recursive function for long ints
 void karatsuba(char* first, char* second, char* res,int B) 
 { 
   int lenx = strlen(first);
@@ -146,10 +134,8 @@ void karatsuba(char* first, char* second, char* res,int B)
     addZero(second,diff);
   }
 
-
   int len = strlen(first); 
-  if (len == 1) 
-  { 
+  if (len == 1){ 
     int val = (first[0] - '0') * (second[0] - '0'); 
     if (val < 10) { 
       if(val < B){
@@ -160,14 +146,9 @@ void karatsuba(char* first, char* second, char* res,int B)
         res[1] = (val%B) + '0';
       } 
     }
-    else 
-    { 
-
+    else{ 
       res[0] = (val / B) + '0'; 
       res[1] = (val % B) + '0';
-
-
-
     } 
   } 
   else if(len > 1)
@@ -176,8 +157,6 @@ void karatsuba(char* first, char* second, char* res,int B)
     char* xr = CreateArray(len); 
     char* yl = CreateArray(len); 
     char* yr = CreateArray(len); 
-
-
     int rightSize = len / 2; 
     int leftSize = len - rightSize; 
 
@@ -191,10 +170,7 @@ void karatsuba(char* first, char* second, char* res,int B)
     char* P3 = CreateArray(MAX); 
 
     karatsuba(xl, yl, P1,B); 
-
-
     karatsuba(xr, yr, P2,B); 
-
 
     char* tmp1 = CreateArray(maxl); 
     char* tmp2 = CreateArray(maxl); 
@@ -205,9 +181,7 @@ void karatsuba(char* first, char* second, char* res,int B)
 
     karatsuba(tmp1, tmp2, P3,B); 
 
-    
     subtract(P3, P1, tmp3,B); 
-
     subtract(tmp3, P2, tmp4,B);
 
     base10(tmp4, rightSize); 
@@ -216,7 +190,6 @@ void karatsuba(char* first, char* second, char* res,int B)
     schooladd(res, tmp4, res,B);
     
     remZero(res); 
-
   } 
 } 
 
@@ -225,6 +198,7 @@ int main()
   char first[MAX], second[MAX]; 
   int B;
 
+  cout<<"(number1 number2 base): "<<endl;
   cin>>first>>second>>B; 
 
   char* mult = CreateArray(MAX); 
@@ -234,6 +208,4 @@ int main()
   karatsuba(first, second, mult,B);
 
   cout<<add << " " <<mult; 
-
-
 } 
